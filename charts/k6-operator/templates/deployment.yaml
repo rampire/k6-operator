@@ -66,9 +66,18 @@ spec:
             {{- if gt (int .Values.manager.replicas) 1 }}
             - --enable-leader-election
             {{- end }}
+            {{- if .Values.prometheus.enabled }}
             {{- if .Values.authProxy.enabled }}
             - --metrics-addr=127.0.0.1:8080
+            {{- else}}
+            - --metrics-addr=0.0.0.0:8080
             {{- end }}
+            {{- end }}
+          {{- if .Values.prometheus.enabled }}
+          ports:
+            - containerPort: 8080
+              name: http
+          {{- end }}
         {{- if .Values.authProxy.enabled }}
         - name: kube-rbac-proxy
           image: "{{ .Values.global.image.registry | default .Values.authProxy.image.registry }}/{{ .Values.authProxy.image.repository }}:{{ .Values.authProxy.image.tag }}"

@@ -19,7 +19,14 @@ spec:
       - {{- include "k6-operator.namespace" . }}
   endpoints:
     - path: /metrics
+      {{- if .Values.authProxy.enabled }}
       port: https
+      scheme: https
+      tlsConfig:
+        insecureSkipVerify: true
+      {{- else }}
+      port: http
+      {{- end }}
   selector:
     matchLabels:
       control-plane: "controller-manager"

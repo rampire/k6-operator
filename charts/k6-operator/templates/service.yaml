@@ -1,4 +1,4 @@
-{{- if .Values.authProxy.enabled }}
+{{- if .Values.prometheus.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,9 +13,15 @@ metadata:
     {{- include "k6-operator.customAnnotations" . | default "" | nindent 4 }}
 spec:
   ports:
+  {{- if .Values.authProxy.enabled }}
   - name: https
     port: 8443
     targetPort: https
+  {{- else }}
+  - name: http
+    port: 8080
+    targetPort: http
+  {{- end }}
   selector:
     control-plane: "controller-manager"
 {{- end }}
